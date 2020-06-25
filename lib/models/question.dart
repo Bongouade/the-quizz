@@ -1,6 +1,6 @@
-class Question {
+class QuestionModel {
   String question;
   bool answer;
 
-  Question(this.question, this.answer);
+  QuestionModel(this.question, this.answer);
 }
