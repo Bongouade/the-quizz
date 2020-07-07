@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
- import 'screens/quizz_screen.dart';
-void main () => runApp(QuizzApp());
+import 'screens/quizz_screen.dart';
+
+void main() => runApp(QuizzApp());
 
 class QuizzApp extends StatelessWidget {
-@override
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "TheQuizz",
       home: QuizzScreen(),
-    ) ;
+    );
   }
 }

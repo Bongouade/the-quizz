@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import '../controllers/quizz_controller.dart';
+import '../ressources/quizz_builder.dart';
 
 QuizzController quizzController = QuizzController();
 
@@ -26,8 +27,34 @@ class _QuizzScreenState extends State<QuizzScreen> {
   void initState() {
     super.initState();
     _randomButton = [
-      _buildTrue(),
-      _buildFalse(),
+      QuizzBuilder.buildButton(
+        name: "Vrai",
+        onTap: () {
+          setState(() {
+            if (quizzController.getAnswer(_counter) == true) {
+              _score.add(QuizzBuilder.check());
+            } else {
+              _score.add(QuizzBuilder.close());
+            }
+          });
+          _increment();
+        },
+        color: Colors.green,
+      ),
+      QuizzBuilder.buildButton(
+        name: "Faux",
+        onTap: () {
+          setState(() {
+            if (quizzController.getAnswer(_counter) == false) {
+              _score.add(QuizzBuilder.check());
+            } else {
+              _score.add(QuizzBuilder.close());
+            }
+          });
+          _increment();
+        },
+        color: Colors.red,
+      ),
     ];
   }
 
@@ -39,23 +66,21 @@ class _QuizzScreenState extends State<QuizzScreen> {
         title: "Fin du quizz",
         desc: "Le quizz est erminé, voulez-vous le relancer ?",
         buttons: <DialogButton>[
-          DialogButton(
-            child: Text("Non"),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          DialogButton(
-            child: Text("Oui"),
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _score.clear();
-                _counter = 0;
-                quizzController.shuffleQuestion();
-              });
-            },
-          ),
+          QuizzBuilder.buttonDial(
+              name: 'Non',
+              onTap: () {
+                Navigator.pop(context);
+              }),
+          QuizzBuilder.buttonDial(
+              name: 'Oui',
+              onTap: () {
+                Navigator.pop(context);
+                setState(() {
+                  _counter = 0;
+                  _score.clear();
+                  quizzController.shuffleQuestion();
+                });
+              }),
         ]).show();
   }
 
@@ -78,114 +103,14 @@ class _QuizzScreenState extends State<QuizzScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            _buildScore(),
-            _buildQuestion(),
+            QuizzBuilder.buildScore(point: _score),
+            QuizzBuilder.buildQuestion(
+                quizzController.getQuestionText(_counter)),
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: _randomButton),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildScore() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 10.0,
-        left: 20.0,
-        right: 20.0,
-      ),
-      child: Container(
-        color: Colors.white,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: _score,
-        ),
-      ),
-    );
-  }
-
-  Widget _close() {
-    return Icon(
-      Icons.close,
-      size: 30.0,
-      color: Colors.red,
-    );
-  }
-
-  Widget _check() {
-    return Icon(
-      Icons.check,
-      size: 30.0,
-      color: Colors.green,
-    );
-  }
-
-  Widget _buildQuestion() {
-    return Padding(
-      padding: EdgeInsets.all(15.0),
-      child: Center(
-        child: Text(
-          quizzController.getQuestionText(_counter),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 25.0,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTrue() {
-    return Padding(
-      padding: EdgeInsets.all(10.0),
-      child: FlatButton(
-        textColor: Colors.white,
-        color: Colors.green,
-        child: Text(
-          "Vrai",
-          style: TextStyle(
-            fontSize: 20.0,
-          ),
-        ),
-        onPressed: () {
-          setState(() {
-            if (quizzController.getAnswer(_counter) == true) {
-              _score.add(_check());
-            } else {
-              _score.add(_close());
-            }
-          });
-          _increment();
-        },
-      ),
-    );
-  }
-
-  Widget _buildFalse() {
-    return Padding(
-      padding: EdgeInsets.all(10.0),
-      child: FlatButton(
-        textColor: Colors.white,
-        color: Colors.red,
-        child: Text(
-          "Faux",
-          style: TextStyle(
-            fontSize: 20.0,
-          ),
-        ),
-        onPressed: () {
-          setState(() {
-            if (quizzController.getAnswer(_counter) == false) {
-              _score.add(_check());
-            } else {
-              _score.add(_close());
-            }
-          });
-          _increment();
-        },
       ),
     );
   }
